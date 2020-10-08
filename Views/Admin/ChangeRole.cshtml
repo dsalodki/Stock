@@ -1,0 +1,84 @@
+﻿@model List<Stock.ViewModels.ChangeRoleViewModel>
+
+
+@{
+    ViewData["Title"] = "ChangeRole";
+}
+
+<h1>ChangeRole</h1>
+
+@{
+        var list = new List<SelectListItem>();
+        foreach (var role in ViewBag.Roles)
+        {
+            list.Add(new SelectListItem(role.Name, role.Id.ToString()));
+        }
+}
+
+<form asp-action="ChangeRole" asp-controller="Admin" asp-anti-forgery="true" onsubmit="event.preventDefault(); return sendPost(this);">
+    <table id="users">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>
+                        @user.Email
+                        @Html.Hidden("UserId" + user.Id, user.Id)
+                    </td>
+                    <td>
+                        @{
+                            list.First(x => x.Value == user.RoleId.ToString()).Selected = true;
+                        }
+
+                        @Html.DropDownList("RoleId" + user.Id, list)
+                        @{
+                            list.First(x => x.Value == user.RoleId.ToString()).Selected = false;
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit">Сохранить</button>
+</form>
+
+@section Scripts {
+    <script>
+        function sendPost(form) {
+
+            var trs = $('#users').find('tbody').find('tr');
+            var model = [];
+            trs.each(function () {
+                var userId = $(this).find('td').eq(0).children('input[type=hidden]').val();
+                var roleId = $(this).find('td').eq(1).children('select').children("option:selected").val();
+                var email = $(this).find('td').eq(0).text().trim();
+                var changeRoleViewModel = {
+                    Id: Number(userId),
+                    Email: email,
+                    RoleId: Number(roleId)
+                }
+                model.push(changeRoleViewModel);
+            });
+
+            $.ajax({
+                url: $(form).attr('action'),
+                type: 'post',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(model),
+                success: function (result) {
+                    alert(result.success); // result is an object which is created from the returned JSON
+                }
+            });
+
+            return false;
+        }
+    </script>
+}

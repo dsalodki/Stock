@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Stock.Models.SalesInvoice>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BroughtId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.When)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShippedId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CheckedId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BroughtId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.When)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShippedId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CheckedId)
+            </td>
+            <td>
+                <a asp-controller="SalesInvoice" asp-action="Apply" asp-route-id="@item.Id">Apply</a> |
+                <a asp-controller="SalesInfos" asp-action="Index" asp-route-id="@item.Id">Infos</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
